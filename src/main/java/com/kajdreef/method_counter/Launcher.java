@@ -28,7 +28,9 @@ public class Launcher {
 
         try {
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection(String.format("jdbc:sqlite:%s", databasePath));
+            String database_path = String.format("jdbc:sqlite:%s", databasePath);
+            
+            c = DriverManager.getConnection(database_path);
             c.setAutoCommit(false);
 
             Statement statement = c.createStatement();
@@ -53,11 +55,12 @@ public class Launcher {
             String sql_insert_table = (
                 "INSERT INTO methods (project, file_path, class_name, method_name, rtype, line_start, line_end, is_test) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
             );
-            PreparedStatement preparedStatement = c.prepareStatement(sql_insert_table);
-
-            System.out.println(list.size());
             
+            System.out.println(list.size());
+            PreparedStatement preparedStatement;
+
             for (Component item :  list) {
+                preparedStatement = c.prepareStatement(sql_insert_table);
                 MethodSignature method = (MethodSignature) item;
                 try {
                     preparedStatement.setString(1, project);
@@ -72,8 +75,11 @@ public class Launcher {
                 } catch(Exception e) {
                     System.err.println(String.format("%s - %s", e.getMessage(), method.asString()));
                 }
+                finally {
+                    preparedStatement.close();
+                }
             }
-            preparedStatement.close();
+            
             c.commit();
             
         } catch (Exception e) {
@@ -108,17 +114,15 @@ public class Launcher {
 
     public static void main(String[] args) {
         String rootDirectoryProject;
-        String databasePath = "experiment_1.db";;
+        String databasePath;
 
         if (args.length == 1) {
-            rootDirectoryProject = args[0];
-        } 
-        else if (args.length == 2) {
             rootDirectoryProject = args[0]; 
-            databasePath = args[1];
+            databasePath = "/Users/kajdreef/code/test-architecture-erosion/evaluations/evaluation_1/data/experiment_1.db";
         }
         else {
-            rootDirectoryProject = "/Users/kajdreef/work/ta/SWE265p/projects/fastjson/";
+            System.exit(0);
+            return;
         }
 
         System.out.println(String.format("%s - %s", rootDirectoryProject, databasePath));

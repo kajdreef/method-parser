@@ -65,17 +65,24 @@ public class MethodSignaturesParser implements JavaFileParser {
 
     public List<Component> parse(File file) throws FileNotFoundException {
         // Parse the code you want to inspect:
-        CompilationUnit cu = StaticJavaParser.parse(file);
+        CompilationUnit cu = null;
 
-        Optional<PackageDeclaration> packageDecl = cu.getPackageDeclaration();
-        final String packageName;
+        try { 
+            cu = StaticJavaParser.parse(file);
+        } catch(Exception e) {
+            System.err.println("failed to parse File: " + file.toString());
+            return new LinkedList<Component>();
+        }
 
-        if (packageDecl.isPresent()) {
-            packageName = packageDecl.get().getNameAsString();
-        }
-        else {
-            packageName = "";
-        }
+        // Optional<PackageDeclaration> packageDecl = cu.getPackageDeclaration();
+        // final String packageName;
+
+        // if (packageDecl.isPresent()) {
+        //     packageName = packageDecl.get().getNameAsString();
+        // }
+        // else {
+        //     packageName = "";
+        // }
 
         List<Component> method_list = new LinkedList<>();
         
@@ -90,7 +97,7 @@ public class MethodSignaturesParser implements JavaFileParser {
                 method_list.add(
                     new MethodSignature(
                         this.rootDirectory.toPath().relativize(file.toPath()).toString(),
-                        packageName + "." + parentNode.getNameAsString(),
+                        parentNode.getNameAsString(),
                         method.getSignature().asString(),
                         returnType.asString(),
                         method.getRange().get().begin.line,
@@ -104,7 +111,7 @@ public class MethodSignaturesParser implements JavaFileParser {
                 method_list.add(
                     new MethodSignature(
                         this.rootDirectory.toPath().relativize(file.toPath()).toString(),
-                        packageName + parentNode.getNameAsString(),
+                        parentNode.getNameAsString(),
                         method.getSignature().asString(),
                         returnType.asString(),
                         method.getRange().get().begin.line,
