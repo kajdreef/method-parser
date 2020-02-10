@@ -4,13 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Optional;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -73,16 +71,6 @@ public class MethodSignaturesParser implements JavaFileParser {
             System.err.println("failed to parse File: " + file.toString());
             return new LinkedList<Component>();
         }
-
-        // Optional<PackageDeclaration> packageDecl = cu.getPackageDeclaration();
-        // final String packageName;
-
-        // if (packageDecl.isPresent()) {
-        //     packageName = packageDecl.get().getNameAsString();
-        // }
-        // else {
-        //     packageName = "";
-        // }
 
         List<Component> method_list = new LinkedList<>();
         

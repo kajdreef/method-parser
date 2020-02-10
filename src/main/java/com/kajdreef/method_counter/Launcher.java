@@ -44,7 +44,7 @@ public class Launcher {
                 + "line_start int NOT NULL,"
                 + "line_end int NOT NULL," 
                 + "is_test int NOT NULL,"
-                + "PRIMARY KEY (project, file_path, class_name, method_name, rtype)"
+                + "PRIMARY KEY (project, file_path, class_name, method_name, rtype, line_start, line_end)"
                 + ");"
             );
 
@@ -109,7 +109,8 @@ public class Launcher {
             }
         }
 
-        this.storeInDatabase(directory, list, databasePath);
+        String[] path = directory.split("/");
+        this.storeInDatabase(path[path.length - 1], list, databasePath);
     }
 
     public static void main(String[] args) {
@@ -118,7 +119,7 @@ public class Launcher {
 
         if (args.length == 1) {
             rootDirectoryProject = args[0]; 
-            databasePath = "/Users/kajdreef/code/test-architecture-erosion/evaluations/evaluation_1/data/experiment_1.db";
+            databasePath = "/Users/spideruci/shared/data/experiment_1.db";
         }
         else {
             System.exit(0);
